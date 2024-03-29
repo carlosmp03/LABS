@@ -1,7 +1,9 @@
 #include <iostream>
+#include <stdexcept>
+#include <algorithm>
 
 template<typename T>
-class DynamicArray {
+class DynArray {
 private:
     T* array;
     size_t capacity;
@@ -18,12 +20,8 @@ private:
     }
 
 public:
-    DynamicArray() : capacity(10), size(0) {
+    DynArray() : capacity(10), size(0) {
         array = new T[capacity];
-    }
-
-    ~DynamicArray() {
-        delete[] array;
     }
 
     void push_back(const T& element) {
@@ -45,6 +43,7 @@ public:
         }
         return array[index];
     }
+    
 
     size_t getSize() const {
         return size;
@@ -53,4 +52,69 @@ public:
     size_t getCapacity() const {
         return capacity;
     }
+
+    DynArray<T>& operator+=(const DynArray<T>& other) {
+        size_t newSize = size + other.size;
+        if (newSize > capacity) {
+            while (newSize > capacity) {
+                resize();
+            }
+        }
+        for (size_t i = 0; i < other.size; ++i) {
+            array[size + i] = other.array[i];
+        }
+        size = newSize;
+        return *this;
+    }
+
+    DynArray<T>& operator+(const DynArray<T>& other) {
+        size_t newSize = size + other.size;
+        if (newSize > capacity) {
+            while (newSize > capacity) {
+                resize();
+            }
+        }
+        for (size_t i = 0; i < other.size; ++i) {
+            array[size + i] = other.array[i];
+        }
+        size = newSize;
+        return *this;
+    }
+
+    void print() const{
+        for(int i = 0; i < size; i++){
+            std::cout << array[i];
+        }
+        std::cout << "\n";
+    }
 };
+
+template<typename T, typename Func>
+DynArray<T> map(DynArray<T>& arr, Func func) {
+    DynArray<T> result;
+    for (size_t i = 0; i < arr.getSize(); ++i) {
+        result.push_back(func(arr[i]));
+    }
+    return result;
+}
+
+/*
+int main() {
+    DynArray<int> dar1;
+    DynArray<int> dar3;
+    dar1.push_back(1);
+    dar1.push_back(2);
+
+    DynArray<int> dar2;
+    dar2.push_back(3);
+    dar2.push_back(4);
+
+    dar3 = dar1 + dar2;
+
+    for (size_t i = 0; i < dar1.getSize(); i++) {
+        std::cout << dar3[i] << " ";
+    }
+    std::cout << std::endl;
+    return 0;
+}
+*/
