@@ -37,6 +37,15 @@ public:
         }
     }
 
+    void pop_front() {
+        if (size != 0) {
+            for (size_t i = 1; i < size; ++i) {
+                array[i - 1] = array[i];
+            }
+            --size;
+        }
+    }
+
     T& operator[](size_t index) {
         if (index >= size) {
             throw std::out_of_range("Index out of range");
@@ -80,6 +89,17 @@ public:
         size = newSize;
         return *this;
     }
+    bool operator==(const DynArray<T>& other){
+        if(other.size != size){
+            return 0;
+        }
+        for (int i = 0; i < size; i ++){
+            if(array[i] != other.array[i]){
+                return 0;
+            }
+        }
+        return 1;
+    }
 
     void print() const{
         for(int i = 0; i < size; i++){
@@ -96,6 +116,7 @@ DynArray<T> map(DynArray<T>& arr, Func func) {
         result.push_back(func(arr[i]));
     }
     return result;
+
 }
 
 /*
