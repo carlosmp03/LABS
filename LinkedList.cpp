@@ -1,4 +1,3 @@
-#include <iostream>
 
 //Раскидать по файлам
 
@@ -6,7 +5,7 @@
 template <typename T>
 
 class LinkedList {
-private:
+public:
     struct Node{
         T data;
         Node* prev;
@@ -35,7 +34,7 @@ private:
         }
         void push_back(const T& val){
             if (empty()){
-                head = new Node(val);
+                head = tail = new Node(val);
             }
             else{
                 tail->next = new Node(val, tail);
@@ -43,6 +42,7 @@ private:
             }
             ++size;
         }
+
         void push_forward(const T& val){
             if (empty()){
                 head = new Node(val);
@@ -68,7 +68,7 @@ private:
             }
         }
         void pop_front(){
-            if(!empty){
+            if(!empty()){
                 Node* temp = head;
                 head = head->next;
                 delete temp;
@@ -94,5 +94,28 @@ private:
                 curNode = curNode->next;
             }
             std::cout << "\n";
+        }
+            template<typename Function>
+        LinkedList<T> map(Function func) const {
+            LinkedList<T> mappedList;
+            Node* curNode = head;
+            while (curNode != nullptr) {
+                mappedList.push_back(func(curNode->data));
+                curNode = curNode->next;
+            }
+            return mappedList;
+        }
+
+        template<typename Predicate>
+        LinkedList<T> where(Predicate pred) const {
+            LinkedList<T> filteredList;
+            Node* curNode = head;
+            while (curNode != nullptr) {
+                if (pred(curNode->data)) {
+                    filteredList.push_back(curNode->data);
+                }
+                curNode = curNode->next;
+            }
+            return filteredList;
         }
 };
