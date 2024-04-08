@@ -1,24 +1,34 @@
 #include <iostream>
+#include <cassert>
 #include "DynArray.cpp"
 
 // Overloading input and output operators for DynArray
 template<typename T>
 std::ostream& operator<<(std::ostream& out, DynArray<T>& arr) {
+    size_t size = arr.getSize();
     out << "[";
-    for (size_t i = 0; i < arr.getSize(); ++i) {
-        out << arr[i];
-        if (i != arr.getSize() - 1)
-            out << ", ";
+    if (size > 0) {
+        for (size_t i = 0; i < size - 1; ++i) {
+            out << arr[i] << ", ";
+        }
+        out << arr[size - 1];
     }
     out << "]";
     return out;
 }
 
 
+
 template<typename T>
 std::istream& operator >> (std::istream& in, DynArray<T>& dar){
     char dummy;
-    while (dummy != 'n') { // Compare with character 'n'
+    std::cin.get(dummy); // Считываем первый символ
+    if (dummy == 'n') {
+        return in; // Если первый символ 'n', возвращаем istream без изменений
+    }
+    in.putback(dummy); // Возвращаем символ обратно в поток
+
+    while (dummy != 'n') {
         T num;
         std::cin >> num >> dummy;
         dar.push_back(num);
@@ -27,47 +37,116 @@ std::istream& operator >> (std::istream& in, DynArray<T>& dar){
 }
 
 
-void PlusOperatorTests(){
-    std::cout << "Tests for 2 empty arrays: \n";
-    DynArray<int> dar1;
-    DynArray<int> dar2;
-    DynArray<int> resDar;
-    resDar = dar1 + dar2;
-    resDar.print();
-    std::cout << "Tests for 1 filled and 1 empty array: \n";
-    //std::cout << "Enter elements for the array with any ', ' in between spaces(Please put 'n' at the end of the output): \n";
-    std::cin >> dar1;
-    std::cout << dar1;
-    std::cout << "\n";
-    std::cout << "Now you can enter your own tests: \n";
-    DynArray<int> UsersDar1;
-    DynArray<int> UsersDar2;
-    DynArray<int> ResForUsers;
-    std::cin >> UsersDar1;
-    std::cout << "\n";
-    std::cin >> UsersDar2;
-    std::cout << "\n";
-    ResForUsers = UsersDar1 + UsersDar2;
-    std::cout << "\n";
-    std::cout << ResForUsers;
-    std::cout << "\n";
+
+
+
+void test_push_back() {
+    DynArray<int> arr;
+    arr.push_back(1);
+    arr.push_back(2);
+    arr.push_back(3);
+
+    assert(arr.getSize() == 3);
+    assert(arr[0] == 1);
+    assert(arr[1] == 2);
+    assert(arr[2] == 3);
 }
 
+void test_pop_back() {
+    DynArray<int> arr;
+    arr.push_back(1);
+    arr.push_back(2);
+    arr.push_back(3);
+    arr.pop_back();
 
-float FuncForTest(float x){
-    return x * 2;
+    assert(arr.getSize() == 2);
+    assert(arr[0] == 1);
+    assert(arr[1] == 2);
 }
 
-void TestsForMap(){
-    DynArray<float> UsersDar;
-    std::cout << "Please, enter the elements of the array with ', ' in between elems (put 'n' at the end of the input): \n";
-    std::cin >> UsersDar;
-    DynArray<float> ResDar = map(UsersDar, FuncForTest);
-    std::cout << "\n";
-    std::cout << ResDar;
-    std::cout << "\n";
+void test_pop_front() {
+    DynArray<int> arr;
+    arr.push_back(1);
+    arr.push_back(2);
+    arr.push_back(3);
+    arr.pop_front();
+
+    assert(arr.getSize() == 2);
+    assert(arr[0] == 2);
+    assert(arr[1] == 3);
 }
 
-int main(){
-    TestsForMap();
+void test_operator_index() {
+    DynArray<int> arr;
+    arr.push_back(1);
+    arr.push_back(2);
+    arr.push_back(3);
+
+    assert(arr[0] == 1);
+    assert(arr[1] == 2);
+    assert(arr[2] == 3);
+}
+
+void test_operator_plus_equal() {
+    DynArray<int> arr1;
+    arr1.push_back(1);
+    arr1.push_back(2);
+    
+    DynArray<int> arr2;
+    arr2.push_back(3);
+    arr2.push_back(4);
+
+    arr1 += arr2;
+
+    assert(arr1.getSize() == 4);
+    assert(arr1[0] == 1);
+    assert(arr1[1] == 2);
+    assert(arr1[2] == 3);
+    assert(arr1[3] == 4);
+}
+
+void test_operator_plus() {
+    DynArray<int> arr1;
+    arr1.push_back(1);
+    arr1.push_back(2);
+    
+    DynArray<int> arr2;
+    arr2.push_back(3);
+    arr2.push_back(4);
+
+    DynArray<int> result = arr1 + arr2;
+
+    assert(result.getSize() == 4);
+    assert(result[0] == 1);
+    assert(result[1] == 2);
+    assert(result[2] == 3);
+    assert(result[3] == 4);
+}
+
+void test_operator_equal() {
+    DynArray<int> arr1;
+    arr1.push_back(1);
+    arr1.push_back(2);
+    arr1.push_back(3);
+
+    DynArray<int> arr2;
+    arr2.push_back(1);
+    arr2.push_back(2);
+    arr2.push_back(3);
+
+    assert(arr1 == arr2);
+}
+
+int main() {
+    test_push_back();
+    test_pop_back();
+    test_pop_front();
+    test_operator_index();
+    test_operator_plus_equal();
+    test_operator_plus();
+    test_operator_equal();
+
+    std::cout << "All tests passed!\n";
+
+    return 0;
 }
