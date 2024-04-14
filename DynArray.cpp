@@ -76,19 +76,8 @@ public:
         return *this;
     }
 
-    DynArray<T>& operator+(const DynArray<T>& other) {
-        size_t newSize = size + other.size;
-        if (newSize > capacity) {
-            while (newSize > capacity) {
-                resize();
-            }
-        }
-        for (size_t i = 0; i < other.size; ++i) {
-            array[size + i] = other.array[i];
-        }
-        size = newSize;
-        return *this;
-    }
+    
+
     bool operator==(const DynArray<T>& other){
         if(other.size != size){
             return 0;
@@ -99,6 +88,22 @@ public:
             }
         }
         return 1;
+    }
+    DynArray<T> operator+(const DynArray<T>& arr2) {
+        DynArray<T> result;
+        size_t newSize = this->getSize() + arr2.getSize();
+        if (newSize > result.getCapacity()) {
+            while (newSize > result.getCapacity()) {
+                result.resize();
+            }
+        }
+        for (size_t i = 0; i < this->getSize(); ++i) {
+            result.push_back(array[i]);
+        }
+        for (size_t i = 0; i < arr2.getSize(); ++i) {
+            result.push_back(arr2.array[i]);
+        }
+        return result;
     }
 
     void print() const{
@@ -116,26 +121,4 @@ DynArray<T> map(DynArray<T>& arr, Func func) {
         result.push_back(func(arr[i]));
     }
     return result;
-
 }
-
-/*
-int main() {
-    DynArray<int> dar1;
-    DynArray<int> dar3;
-    dar1.push_back(1);
-    dar1.push_back(2);
-
-    DynArray<int> dar2;
-    dar2.push_back(3);
-    dar2.push_back(4);
-
-    dar3 = dar1 + dar2;
-
-    for (size_t i = 0; i < dar1.getSize(); i++) {
-        std::cout << dar3[i] << " ";
-    }
-    std::cout << std::endl;
-    return 0;
-}
-*/
