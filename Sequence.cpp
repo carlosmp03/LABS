@@ -14,7 +14,7 @@ public:
     virtual void Prepend(const T& item) = 0;
     virtual void InsertAt(const T& item, int index) = 0;
     virtual Sequence<T>* Concat(const Sequence<T>* list) const = 0;
-
+    virtual void Print() const = 0;
     virtual ~Sequence() {}
 };
 
@@ -32,8 +32,8 @@ public:
     }
 
     T GetLast() const override {
-        if (array.getSize() == 0) {
-            throw std::out_of_range("Index out of range");
+        if(array.getSize() == 0){
+            throw std::out_of_range("index out of range");
         }
         return array[array.getSize() - 1];
     }
@@ -65,12 +65,8 @@ public:
     }
 
     void Prepend(const T& item) override {
-        DynArray<T> newArray;
-        newArray.push_back(item);
-        for (size_t i = 0; i < array.getSize(); ++i) {
-            newArray.push_back(array[i]);
-        }
-        array = newArray;
+        array.push_front(item);
+        
     }
 
     void InsertAt(const T& item, int index) override {
@@ -88,6 +84,13 @@ public:
         array = newArray;
     }
 
+    void Print() const override{
+        for(int i = 0; i < array.getSize(); i++){
+            std::cout << array[i] << " ";
+        }
+        std::cout << "\n";
+    }
+
     Sequence<T>* Concat(const Sequence<T>* list) const override {
         const ArraySequence<T>* arrList = dynamic_cast<const ArraySequence<T>*>(list);
         if (!arrList) {
@@ -102,6 +105,8 @@ public:
         }
         return result;
     }
+
+    
 };
 
 template<typename T>
@@ -135,6 +140,7 @@ public:
         return curNode->data;
     }
 
+
     Sequence<T>* GetSubsequence(int startIndex, int endIndex) const override {
         if (startIndex < 0 || startIndex >= list.getSize() || endIndex < 0 || endIndex >= list.getSize() || startIndex > endIndex) {
             throw std::out_of_range("Index out of range");
@@ -167,11 +173,7 @@ public:
         if (index < 0 || index > list.getSize()) {
             throw std::out_of_range("Index out of range");
         }
-        typename LinkedList<T>::Node* curNode = list.head;
-        for (int i = 0; i < index; ++i) {
-            curNode = curNode->next;
-        }
-        list.insert(curNode, item);
+       list.insert(item, index);
     }
 
     Sequence<T>* Concat(const Sequence<T>* other) const override {
@@ -192,4 +194,40 @@ public:
         }
         return result;
     }
+
+    void Print() const override {
+        typename LinkedList<T>::Node* curNode = list.head;
+        while (curNode != nullptr) {
+            std::cout << curNode->data << " ";
+            curNode = curNode->next; 
+        }
+        std::cout << "\n";
+    }
+
 };
+
+/*
+int main(){
+    ArraySequence<int> AS;
+    Sequence<int> * subAS;
+    AS.Append(1);
+    AS.Prepend(0);
+    AS.Append(3);
+    AS.InsertAt(2,2);
+    AS.Print();
+    subAS = AS.GetSubsequence(1,2);
+    subAS->Print();
+    
+    ListSequence<int> LS;
+    
+    LS.Append(0);
+    LS.Append(1);
+    LS.Append(3);
+    LS.InsertAt(2, 2);
+    LS.Print();
+    Sequence<int> * subLS = LS.GetSubsequence(1,3);
+    subLS->Print();
+
+
+}
+*/
