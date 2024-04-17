@@ -1,7 +1,3 @@
-
-//Раскидать по файлам
-
-//Linked List
 template <typename T>
 
 class LinkedList {
@@ -45,7 +41,7 @@ public:
 
         void push_forward(const T& val){
             if (empty()){
-                head = new Node(val);
+                head = tail = new Node(val);
             }
             else{
                 head->prev = new Node(val, head);
@@ -84,7 +80,7 @@ public:
         size_t getSize() const{
             return size;
         }
-        bool empty(){
+        bool empty() const{
             return size == 0;
         }
         void print() const{
@@ -118,4 +114,32 @@ public:
             }
             return filteredList;
         }
+
+        void insert(const T& elem, size_t index) {
+            if (index > size) {
+                throw std::out_of_range("Index out of range");
+            }
+            if (index == 0) {
+                push_forward(elem);
+                return;
+            }
+            if (index == size) {
+                push_back(elem);
+                return;
+            }
+
+            Node* current = head;
+            for (size_t i = 0; i < index; ++i) {
+                current = current->next;
+            }
+
+            // Now, current points to the node after which we need to insert the new node
+            Node* newNode = new Node(elem, current->prev, current);
+            if (current->prev) {
+                current->prev->next = newNode;
+            }
+            current->prev = newNode;
+            ++size;
+        }
+
 };
