@@ -19,16 +19,49 @@ private:
         array = newArray;
     }
 
+    void ensureCapacity(size_t minCapacity) {
+        if (minCapacity > capacity) {
+            size_t newCapacity = capacity * 2 > minCapacity ? capacity * 2 : minCapacity;
+            T* newData = new T[newCapacity];
+            for (size_t i = 0; i < size; i++) {
+                newData[i] = array[i];
+            }
+            delete[] array;
+            array = newData;
+            capacity = newCapacity;
+        }
+    }
+
 public:
     DynArray() : capacity(10), size(0) {
         array = new T[capacity];
     }
 
-    void push_back(const T& element) {
+    void push_back(const T& elem) {
         if (size == capacity) {
             resize();
         }
-        array[size++] = element;
+        array[size++] = elem;
+    }
+
+    void push_front(const T& item) {
+        // Shift elements right and insert the item at the beginning
+        ensureCapacity(size + 1);
+        for (int i = size; i > 0; i--) {
+            array[i] = array[i - 1];
+        }
+        array[0] = item;
+        size++;
+    }
+
+    void insert(const T& item, size_t index) {
+        // Insert the item at the given index, shifting elements as necessary
+        ensureCapacity(size + 1);
+        for (int i = size; i > index; i--) {
+            array[i] = array[i - 1];
+        }
+        array[index] = item;
+        size++;
     }
 
     void pop_back() {
@@ -108,9 +141,13 @@ public:
 
     void print() const{
         for(int i = 0; i < size; i++){
-            std::cout << array[i];
+            std::cout << array[i] << " ";
         }
         std::cout << "\n";
+    }
+
+    const T& operator[](size_t index) const {
+        return array[index];
     }
 };
 
@@ -122,3 +159,22 @@ DynArray<T> map(DynArray<T>& arr, Func func) {
     }
     return result;
 }
+
+/*
+
+int main() {
+    DynArray<int> dar1;
+    DynArray<int> dar3;
+    dar1.push_back(1);
+    dar1.push_back(2);
+
+    DynArray<int> dar2;
+    dar2.push_back(3);
+    dar2.push_back(4);
+
+    dar1.push_forward(0);
+    dar1.print();
+    return 0;
+}
+
+*/
